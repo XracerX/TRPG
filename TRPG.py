@@ -463,10 +463,10 @@ def main_game():
     game_window = get_active_window_title()
     gs = GameState()
 
-    initialize_game(gs, console, game_window)
-    exit_game = False
-    while exit_game is False:
-        gs.adventure[gs.next_encounter].resolve_encounter(gs)
+    while True:
+        initialize_game(gs, console, game_window)
+        while gs.adventure:  # Only run adventure loop if an adventure is active
+            gs.adventure[gs.next_encounter].resolve_encounter(gs)
 
 
 if __name__ == "__main__":

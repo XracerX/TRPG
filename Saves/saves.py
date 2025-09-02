@@ -28,3 +28,4 @@ def choose_save(game_state, console, save_list, game_window):
     game_state.adventure = loaded_game_state.adventure
     game_state.character = loaded_game_state.character
     game_state.next_encounter = loaded_game_state.next_encounter
+    return game_state
