@@ -87,6 +87,7 @@ def choose_adventure(game_state, console, game_window):
 
     if choice == (len(adventure_list)):
         TRPG.initialize_game(game_state, console, game_window)
+        return  # Exit after initializing to prevent setting adventure
     else:
         adventure = read_adventure(adventure_list[choice], console, game_window)
         game_state.adventure = adventure

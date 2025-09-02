@@ -96,11 +96,15 @@ def choose_character(game_state, console, character_list, game_window):
 
     text = Text("Choose your character:", justify="center")
     options = dict(enumerate(character_list))
+    options[len(character_list)] = "Return to main menu"
 
     character_menu = TRPG.Menu(text, options, console, game_window)
     character_menu.print_menu()
     character_menu.print_options()
     choice = character_menu.choice()
 
-    character = read_character(character_list[choice])
-    game_state.character = character
+    if choice == len(character_list):
+        TRPG.initialize_game(game_state, console, game_window)
+    else:
+        character = read_character(character_list[choice])
+        game_state.character = character
