@@ -356,25 +356,42 @@ class Battle(Menu):
 
 
 def get_active_window_title():
-    root = subprocess.Popen(
-        ["xprop", "-root", "_NET_ACTIVE_WINDOW"], stdout=subprocess.PIPE
-    )
-    stdout, stderr = root.communicate()
-
-    m = re.search(b"^_NET_ACTIVE_WINDOW.* ([\\w]+)$", stdout)
-    if m is not None:
-        window_id = m.group(1)
-        window = subprocess.Popen(
-            ["xprop", "-id", window_id, "WM_NAME"], stdout=subprocess.PIPE
+    try:
+        root = subprocess.Popen(
+            ["xprop", "-root", "_NET_ACTIVE_WINDOW"], 
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
         )
-        stdout, stderr = window.communicate()
-    else:
-        return None
+        stdout, stderr = root.communicate(timeout=0.5)
+        
+        if not stdout:
+            return None
 
-    match = re.match(b"WM_NAME\\(\\w+\\) = (?P<name>.+)$", stdout)
-    if match is not None:
-        return match.group("name").strip(b'"')
+        m = re.search(br"_NET_ACTIVE_WINDOW.* (0x[\w]+)", stdout)
+        if not m:
+            return None
+            
+        window_id = m.group(1)
+        if not window_id.decode().startswith('0x'):
+            return None
 
+        window = subprocess.Popen(
+            ["xprop", "-id", window_id, "WM_NAME"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
+        )
+        stdout, stderr = window.communicate(timeout=0.5)
+        
+        if not stdout:
+            return None
+
+        match = re.search(br'WM_NAME\(\w+\) = "(?P<name>.+)"', stdout)
+        if match:
+            return match.group("name").decode().strip('"')
+            
+    except (subprocess.TimeoutExpired, ValueError, UnicodeDecodeError):
+        pass
+        
     return None
 
 
