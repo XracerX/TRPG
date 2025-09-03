@@ -446,7 +446,7 @@ def initialize_game(game_state, console, game_window):
     elif choice == "load":
         save_list = [f.split(".")[0] for f in os.listdir("Saves") if f.endswith("sav")]
         if len(save_list) > 0:
-            game_state = sav.choose_save(game_state, console, save_list)
+            game_state = sav.choose_save(game_state, console, save_list, game_window)
         elif len(save_list) == 0:
             console.print(" Looks like you don't have any saved files...")
             time.sleep(2)
@@ -465,8 +465,9 @@ def main_game():
 
     while True:
         initialize_game(gs, console, game_window)
-        while gs.adventure:  # Only run adventure loop if an adventure is active
+        while gs.adventure and not gs.game_over:  # Only run adventure loop if an adventure is active
             gs.adventure[gs.next_encounter].resolve_encounter(gs)
+        gs.game_over = False  # Reset game over state when returning to main menu
 
 
 if __name__ == "__main__":

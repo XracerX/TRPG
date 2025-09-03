@@ -59,10 +59,11 @@ def create_character(rolls=3, save_folder=""):
             attributes["name"] = name
             f = open((save_folder + name + ".json"), mode="w")
             json.dump(attributes, f, indent=4, ensure_ascii=False)
-            f.close
+            f.close()
 
             time.sleep(3.0)
             attributes_accepted = True
+            return name
         elif choice == "yes":
             roll = roll + 1
         else:
